@@ -1,4 +1,4 @@
-from Account import Account 
+from .Account import Account 
 
 class CheckingAccount (Account) : 
     def __init__(self , account_holder , balance , overdraft_limit) : 

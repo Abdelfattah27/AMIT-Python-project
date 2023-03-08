@@ -1,18 +1,21 @@
-from SavingAccount import SavingAccount 
-from CheckingAccount import CheckingAccount 
-from Account import Account
+from models.SavingAccount import SavingAccount 
+from models.CheckingAccount import CheckingAccount 
+from models.Account import Account
+from config import DATA_PATH
 import json
 class Bank : 
     def __init__(self) :
         self.accounts = []
-        with open("data.json" , "r") as file : 
+        with open(DATA_PATH , "r") as file : 
             accounts = json.load(file)
-        for i in accounts["data"] : 
-            if(i["type"] == "checking") : 
-                new_account = CheckingAccount(account_holder=i["account_holder"] , balance=i["balance"] , overdraft_limit= i["overdraft_limit"] )
-            elif(i["type"] == "checking") : 
-                new_account = SavingAccount(account_holder=i["account_holder"] , balance=i["balance"] ,interest_rate= i["interest_rate"] )
-            self.accounts.append(new_account)
+        self.accounts = [CheckingAccount(account_holder=i["account_holder"], balance=i["balance"], overdraft_limit=i["overdraft_limit"]) if i["type"] == "checking" else SavingAccount(account_holder=i["account_holder"], balance=i["balance"], interest_rate=i["interest_rate"]) for i in accounts["data"]]
+
+        # for i in accounts["data"] : 
+        #     if(i["type"] == "checking") : 
+        #         new_account = CheckingAccount(account_holder=i["account_holder"] , balance=i["balance"] , overdraft_limit= i["overdraft_limit"] )
+        #     elif(i["type"] == "checking") : 
+        #         new_account = SavingAccount(account_holder=i["account_holder"] , balance=i["balance"] ,interest_rate= i["interest_rate"] )
+        #     self.accounts.append(new_account)
     def get_all_accounts(self) : 
         for i in self.accounts : 
             if isinstance( i , CheckingAccount) :
@@ -32,17 +35,22 @@ class Bank :
         - account_type (str): the type of the account (e.g., "checking", "savings")
         - overdraft_limit (float, optional): the overdraft limit for a checking account (default=None)
         - interest_rate (float, optional): the interest rate for a savings account (default=None)
+       Returns:
+        - Account: Integer number represent the status of creation 
+            -1 for fail while creation 
+            1 for success creation
+        
         """
         if account_type == "checking" :
             new_account = CheckingAccount(account_holder , balance , overdraft_limit)
             self.accounts.append(new_account)
+            return 0 
         elif account_type == "saving" : 
             new_account = SavingAccount(account_holder , balance , interest_rate) 
-            self.accounts.append(new_account)
-            
+            self.accounts.append(new_account)  
+            return 0 
         else : 
-            raise ValueError(f"Invalid account type {account_type}")
-        
+            return -1        
     def get_account_by_number(self, account_number: str) -> Account:
         """
         Search for a bank account with the specified account number, and return it.
@@ -89,7 +97,6 @@ class Bank :
         
         
     def modify_account(self, account_number: str, *args, **kwargs):
-        print(kwargs)
         """
         Modify the specified attribute of a bank account with the specified account number.
 
@@ -107,14 +114,15 @@ class Bank :
                     if isinstance(account, CheckingAccount) :
                         account.set_overdraft_limit(value)
                     else:
-                        raise ValueError(f"Account {account_number} is not a checking account")
+                        return -1
                 elif int(value) != -1 and attribute == "interest_rate":
                     if isinstance(account, SavingAccount):
                         account.set_interest_rate(value)
                     else:
-                        raise ValueError(f"Account {account_number} is not a savings account")
+                        return -1
             else:
-                raise ValueError(f"Account {account_number} not found" )
+                return -1
+        return 1
         
         
     

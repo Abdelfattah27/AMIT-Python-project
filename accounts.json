@@ -1,0 +1,18 @@
+{
+  "data": [
+    {
+      "account_holder": "ahmed",
+      "balance": 22,
+      "account_number": 1,
+      "overdraft_limit": 12,
+      "type": "checking"
+    },
+    {
+      "account_holder": "ahmed",
+      "balance": 70.0,
+      "account_number": 2,
+      "overdraft_limit": 20.0,
+      "type": "checking"
+    }
+  ]
+}
